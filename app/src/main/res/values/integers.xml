@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="start_level">1</integer>
+    <integer name="start_lives">3</integer>
+    <integer name="start_score">0</integer>
+    <integer name="fall_level_one_lower_bound">3000</integer>
+    <integer name="fall_level_one_upper_bound">8000</integer>
+    <integer name="fall_bound_decrease_per_level">500</integer>
+    <integer name="fall_minimum_lower_bound">500</integer>
+    <integer name="fall_minimum_upper_bound">1000</integer>
+    <integer name="delay_level_one_lower_bound">2000</integer>
+    <integer name="delay_level_one_upper_bound">7000</integer>
+    <integer name="delay_bound_decrease_per_level">500</integer>
+    <integer name="delay_minimum_lower_bound">0</integer>
+    <integer name="delay_minimum_upper_bound">500</integer>
+    <integer name="ufo_level_multiplier">5</integer>
+    <integer name="number_of_ufos">7</integer>
+
+</resources>

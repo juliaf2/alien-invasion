@@ -1,0 +1,40 @@
+package com.example.android.alieninvasion;
+
+/**
+ * Created by juliafiorino on 5/1/17.
+ * http://stackoverflow.com/questions/9276858/how-to-add-a-countup-timer-on-android
+ * http://stackoverflow.com/questions/5738362/pause-countdowntimer-in-android-when-activity-is-not-in-front
+ */
+
+import android.os.CountDownTimer;
+import android.support.annotation.IntegerRes;
+
+public abstract class CountUpTimer extends CountDownTimer {
+    private static final long INTERVAL_MS = 100;
+    private final long duration;
+
+    protected CountUpTimer(long durationMs) {
+        super(durationMs, INTERVAL_MS);
+        this.duration = durationMs;
+    }
+
+    public abstract void onTick(int second);
+
+    public long getDuration() {
+        return this.duration;
+    }
+
+    public void onTick(long msUntilFinished) {
+        int second = (int) ((duration - msUntilFinished) / INTERVAL_MS);
+        onTick(second);
+    }
+
+    @Override
+    public void onFinish() {
+        onTick(duration / 1000);
+    }
+}
+
+
+
+

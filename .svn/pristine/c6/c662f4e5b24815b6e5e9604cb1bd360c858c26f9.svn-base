@@ -1,0 +1,233 @@
+package com.example.android.alieninvasion;
+
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.content.Context;
+import android.content.Intent;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Random;
+
+/**
+ * Created by juliafiorino on 5/1/17.
+ */
+
+public class Game {
+    private int level;
+    private int lives;
+    private int score;
+    private int ufosToShoot;
+ //hello
+    public Game() {
+        this.level = 1;
+        this.lives = 3;
+        this.score = 0;
+        this.ufosToShoot = 5;
+    }
+
+    public void randomizeFallDuration(Animator animation) {
+        long randomDuration = this.getFallDuration();
+        animation.setDuration(randomDuration);
+    }
+
+    public long getFallDuration() {
+        long lowerBound = this.getFallLowerBound();
+        long upperBound = this.getFallUpperBound();
+
+        int intRandomFallDuration = (int)(Math.random() * lowerBound + (upperBound - lowerBound));
+        long randomFallDuration = (long)intRandomFallDuration;
+
+        return randomFallDuration;
+    }
+
+    public long getFallLowerBound() {
+        long LEVEL_ONE_LOWER_BOUND = 6000;
+        long BOUND_DECREASE_PER_LEVEL = 500;
+        long MINIMUM_LOWER_BOUND = 500;
+        long lowerBound = LEVEL_ONE_LOWER_BOUND - (this.getLevel() - 1)*BOUND_DECREASE_PER_LEVEL;
+
+        if(lowerBound > MINIMUM_LOWER_BOUND) {
+            return lowerBound;
+        }
+
+        return MINIMUM_LOWER_BOUND;
+    }
+
+    public long getFallUpperBound() {
+        long LEVEL_ONE_UPPER_BOUND = 10000;
+        long BOUND_DECREASE_PER_LEVEL = 500;
+        long MINIMUM_UPPER_BOUND = 1000;
+        long upperBound = LEVEL_ONE_UPPER_BOUND - (this.getLevel() - 1)*BOUND_DECREASE_PER_LEVEL;
+
+        if(upperBound > MINIMUM_UPPER_BOUND) {
+            return upperBound;
+        }
+
+        return MINIMUM_UPPER_BOUND;
+    }
+
+    public void randomizeDelayDuration(Animator animation) {
+        long randomDuration = this.getDelayDuration();
+        animation.setDuration(randomDuration);
+    }
+
+    public long getDelayDuration() {
+        long lowerBound = this.getDelayLowerBound();
+        long upperBound = this.getDelayUpperBound();
+
+        int intRandomDelay = (int)(Math.random() * lowerBound + (upperBound - lowerBound));
+        long randomDelay = (long)intRandomDelay;
+
+        return randomDelay;
+    }
+
+    public long getDelayLowerBound() {
+        long LEVEL_ONE_LOWER_BOUND = 10000;
+        long BOUND_DECREASE_PER_LEVEL = 1000;
+        long lowerBound = LEVEL_ONE_LOWER_BOUND - (this.getLevel() - 1)*BOUND_DECREASE_PER_LEVEL;
+
+        if(lowerBound > 0) {
+            return lowerBound;
+        }
+
+        return 0;
+    }
+
+    public long getDelayUpperBound() {
+        long LEVEL_ONE_UPPER_BOUND = 15000;
+        long BOUND_DECREASE_PER_LEVEL = 1000;
+        long upperBound = LEVEL_ONE_UPPER_BOUND - (this.getLevel() - 1)*BOUND_DECREASE_PER_LEVEL;
+
+        if(upperBound > 0) {
+            return upperBound;
+        }
+
+        return 0;
+    }
+
+    public void clearAnimation(ArrayList<AnimatorSet> allUfosSet) {
+        for(AnimatorSet ufoSet : allUfosSet) {
+            ufoSet.cancel();
+        }
+    }
+
+    public void startAnimation(ArrayList<AnimatorSet> allUfosSet) {
+        for(AnimatorSet ufoSet : allUfosSet) {
+            ufoSet.start();
+        }
+    }
+
+    public void pairObjects(final ImageView ufo, ImageView cannon, final AnimatorSet ufoSet,
+                            final Animator ufoAnimation, final Animator ufoDelay, final ArrayList<AnimatorSet> allUfosSet,
+                            final TextView levelNotifier, final Context mContext) {
+        ufoSet.play(ufoDelay).before(ufoAnimation);
+        ufoSet.setTarget(ufo);
+
+        this.randomizeDelayDuration(ufoDelay);
+        this.randomizeFallDuration(ufoAnimation);
+
+        levelNotifier.setText(mContext.getResources().getString(R.string.level_indicator, Game.this.getLevel()));
+
+        cannon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(ufo.getVisibility() == View.VISIBLE) {
+                    Game.this.decrementUfosToShoot();
+                    Game.this.incrementLives(1);
+                    levelNotifier.setText(mContext.getResources().getString(R.string.empty_string));
+
+                    ufoSet.cancel();
+                    Game.this.randomizeDelayDuration(ufoDelay);
+                    Game.this.randomizeFallDuration(ufoAnimation);
+                    ufoSet.start();
+                }
+                if(Game.this.ufosToShoot <= 0) {
+                    //INCREMENT THE LEVEL. MAKE A TEXT VIEW. LEAVE A PAUSE TO SHOW THE LEVEL.
+                    Game.this.incrementLevel();
+                    Game.this.resetUfosToShoot();
+                    Game.this.incrementLives(7);
+                    clearAnimation(allUfosSet);
+
+                    levelNotifier.setText(mContext.getResources().getString(R.string.level_indicator, Game.this.getLevel()));
+                    //makes a pause for the textview to show up
+                    ufoDelay.start();
+                    startAnimation(allUfosSet);
+                }
+            }
+        });
+
+        ufoSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                ufo.setVisibility(View.INVISIBLE);
+                Game.this.loseALife();
+                //GAME OVER
+                if(Game.this.getLives() <= 0) {
+                    //go to enter high score
+                    Intent intent = new Intent(mContext, EnterHighScoreActivity.class);
+                    intent.putExtra("SCORE", Game.this.getScore());
+                    mContext.startActivity(intent);
+                }
+            }
+        });
+
+        ufoDelay.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                ufo.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                ufo.setVisibility(View.INVISIBLE);
+            }
+        });
+
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+
+    public int getLives() {
+        return this.lives;
+    }
+
+    public int getScore() {
+        return this.score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void decrementUfosToShoot() {
+        this.ufosToShoot--;
+    }
+
+    public void resetUfosToShoot() {
+        this.ufosToShoot = 5;
+    }
+
+    public void incrementLives(int lives) {
+        this.lives += lives;
+    }
+
+    public void loseALife() {
+        if (this.lives > 0) {
+            lives--;
+        }
+    }
+
+    public void incrementLevel() {
+        this.level++;
+    }
+}

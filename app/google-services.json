@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "74521219508",
+    "firebase_url": "https://alieninvasion-dddee.firebaseio.com",
+    "project_id": "alieninvasion-dddee",
+    "storage_bucket": "alieninvasion-dddee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:74521219508:android:a7fb12a2d85b2b16",
+        "android_client_info": {
+          "package_name": "com.example.android.alieninvasion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "74521219508-coah5bmu5q7o37u8ap51kdp4ctmt39nk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.android.alieninvasion",
+            "certificate_hash": "f83a275a4db8b5111bee8411daf6e4bafae2aff9"
+          }
+        },
+        {
+          "client_id": "74521219508-bg4p5pl8tjgvbjlarinigf5du7o34iei.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlWdDTOIVCyPNBKiAUIZualK0O6DuClDU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "74521219508-bg4p5pl8tjgvbjlarinigf5du7o34iei.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

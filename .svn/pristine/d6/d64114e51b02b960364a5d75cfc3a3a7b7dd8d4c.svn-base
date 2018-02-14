@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">AlienInvasion</string>
+    <string name="level_indicator">Level %1$d</string>
+    <string name="status_indicator_top">Level: %1$d\nScore: %2$d\nLives: %3$d</string>
+    <string name="empty_string"></string>
+    <string name="final_score">Your score: %1$s</string>
+    <string name="database_key">high_score_key</string>
+</resources>

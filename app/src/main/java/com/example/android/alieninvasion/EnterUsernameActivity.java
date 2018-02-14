@@ -1,0 +1,72 @@
+package com.example.android.alieninvasion;
+
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+/**
+ * Contains a floating action button that allows the user to enter a username for a high score
+ * to be pushed to the firebase database. Does not have an actual score yet, so all high scores
+ * have a score of 500.
+ */
+public class EnterUsernameActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_enter_username);
+
+        Intent intent = getIntent();
+        int highScore = intent.getIntExtra(getResources().getString(R.string.score), 0);
+        final String highScoreString = String.valueOf(highScore);
+
+        String yourFinalScore = getResources().getString(R.string.final_score, highScoreString);
+        TextView finalScoreTextView = (TextView) findViewById(R.id.finalScoreTextView);
+        finalScoreTextView.setText(yourFinalScore);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        String databaseKey = getResources().getString(R.string.database_key);
+        final DatabaseReference highScoreReference = database.getReference(databaseKey);
+
+        highScoreReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        final EditText usernameEditText = (EditText) findViewById(R.id.enterUsernameEditText);
+
+        Button submitHighScoreButton = (Button) findViewById(R.id.submitHighScoreButton);
+        submitHighScoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String userInputtedUsername = usernameEditText.getText().toString();
+
+                HighScore newHighScore = new HighScore();
+                newHighScore.username = userInputtedUsername;
+                newHighScore.score = highScoreString;
+                highScoreReference.push().setValue(newHighScore);
+
+                Intent intent = new Intent(getApplicationContext(), HighScoreTableActivity.class);
+                getApplicationContext().startActivity(intent);
+            }
+        });
+    }
+}
